@@ -2,6 +2,11 @@
 
 #Solr master slave replication lag monitoring script. Compatible with cloudkick custom plugin
 
+#Usage: sh script-name.sh master-ip:port slave-ip:port threshold
+#       sh replication_monitoring-core-01-1.sh 192.168.2.4:8080 192.168.2.5:8080 2
+
+
+
 if [ $# -lt 2 ]; then
  echo Usage: `basename $0` SolrMasterIP[:port] SolrSlaveIP[:port] [AlertThreshold]
  exit 1
@@ -11,7 +16,9 @@ fi
 MASTER=$1
 SLAVE=$2
 THRESHOLD=${3:-1}
- 
+
+
+#Change the url if necessary 
 MASTER_INDEX=`wget -qO - http://$1/solr/core-01/admin/replication/index.jsp | grep -Po "(?<=Index Version: )\d+"` 
 [ -z "$MASTER_INDEX" ] && echo status err Error reading Master index && exit 2
 SLAVE_INDEX=`wget -qO - http://$2/solr/core-01/admin/replication/index.jsp | grep -Po "(?<=Index Version: )\d+"`
